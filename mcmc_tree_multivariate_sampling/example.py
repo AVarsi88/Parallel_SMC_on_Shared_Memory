@@ -7,7 +7,7 @@ Created on Fri Nov  5 14:28:12 2021
 
 from sklearn.model_selection import train_test_split
 from create_tree import Tree
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, confusion_matrix
 import copy
 from Tree_sample import TreeDistribution, forward, reverse
 import random
@@ -16,20 +16,17 @@ import math
 import numpy as np
 import pandas as pd
 import time
+from sklearn import datasets
 
 
 from multiprocessing import Process, Manager
 import multiprocessing
 
-data = pd.read_csv (r"/users/psedrous/volatile/mcmc_data/big_data_big_f_space/YearPredictionMSD.txt")
-data= data[:30000]
-data.rename(columns={'2001':'Target'}, inplace=True)
-X = data.drop(["Target"], axis = 1)
-y = data.Target
-X = X.to_numpy()
-y = y.to_numpy()
+data = datasets.load_wine()
 
-print("data length: ", len(data))
+X = data.data
+y = data.target
+#print("data length: ", len(data))
 
 X_train, X_test, y_train, y_test = train_test_split(X,y,test_size = 0.30,random_state=5)
 
@@ -183,6 +180,7 @@ if __name__ == '__main__':
             accepted_samples_prob = [(i)/sum(accepted_samples_prob) for i in accepted_samples_prob]#normalising each value adding up to one_formula 16 overleaf
 
         multinomial_distribution = np.random.multinomial(cores_to_use, accepted_samples_prob, size=1)
+        print("array with weights: ", multinomial_distribution)
         sample_from_multinomial_distribution = []#convert array of arrays into list
         for items in multinomial_distribution:
             for item in items:
